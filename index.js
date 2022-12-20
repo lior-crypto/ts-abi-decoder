@@ -129,7 +129,6 @@ function _decodeMethod(data) {
     return retData;
   }
 }
-
 function _decodeLogs(logs) {  
   return logs.filter(log => log.topics.length > 0).map((logItem) => {
     const methodID = logItem.topics[0].slice(2);
