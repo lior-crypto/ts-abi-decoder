@@ -1,9 +1,10 @@
+
+
 {
   "compilerOptions": {
     "module": "commonjs",
     "target": "ES2020",
     "declaration": true,
-    "outDir": "dist",
     "baseUrl": "src",
     "allowJs": true,
     "lib": ["es2017", "DOM"],
