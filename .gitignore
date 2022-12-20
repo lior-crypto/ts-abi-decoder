@@ -40,4 +40,4 @@ jspm_packages
 .vscode
 
 # dist no loger needed in git, bower was deprecated
-dist
+# dist

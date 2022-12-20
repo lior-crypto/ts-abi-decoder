@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { AbiItem } from "web3-utils";
-import abiDecoder, { Log } from "../index";
+
+import abiDecoder, { Log } from "../../dist/index";
 
 // Test Params
 const testABI: AbiItem[] = [
@@ -161,12 +162,7 @@ describe("abi decoder", function () {
         "24000000000",
         "0x2ac0df260000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000b68656c6c6f20776f726c64000000000000000000000000000000000000000000",
       ],
-      [
-        "0x50A5cf333FC36A18c8F96B1D1e7a2B013C6267aC",
-        "0",
-        "0x46DCcF96Fe3f3bEEf51c72c68A1F3Ad9183a6561",
-        "12",
-      ],
+      ["0x50A5cf333FC36A18c8F96B1D1e7a2B013C6267aC", "0", "0x46DCcF96Fe3f3bEEf51c72c68A1F3Ad9183a6561", "12"],
     ]);
   });
 
@@ -221,9 +217,7 @@ describe("abi decoder", function () {
     const testLogs: Log[] = [
       {
         data: "0x00000000000000000000000065039084cc6f4773291a6ed7dcf5bc3a2e894ff3000000000000000000000000435a4167bc34107bd03e267f9d6b869255151a27",
-        topics: [
-          "0x4fb057ad4a26ed17a57957fa69c306f11987596069b89521c511fc9a894e6161",
-        ],
+        topics: ["0x4fb057ad4a26ed17a57957fa69c306f11987596069b89521c511fc9a894e6161"],
         address: "0x0457874Bb0a346962128a0C01310d00Fc5bb6a83",
       },
     ];
@@ -236,18 +230,12 @@ describe("abi decoder", function () {
     expect(decodedLogs).to.have.length(1);
     expect(decodedLogs[0].name).to.equal("ContractInstantiation");
     expect(decodedLogs[0].events).to.have.length(2);
-    expect(decodedLogs[0].address).to.equal(
-      "0x0457874Bb0a346962128a0C01310d00Fc5bb6a83"
-    );
+    expect(decodedLogs[0].address).to.equal("0x0457874Bb0a346962128a0C01310d00Fc5bb6a83");
     expect(decodedLogs[0].events[0].name).to.equal("sender");
-    expect(decodedLogs[0].events[0].value).to.equal(
-      "0x65039084cc6f4773291a6ed7dcf5bc3a2e894ff3"
-    );
+    expect(decodedLogs[0].events[0].value).to.equal("0x65039084cc6f4773291a6ed7dcf5bc3a2e894ff3");
     expect(decodedLogs[0].events[0].type).to.equal("address");
     expect(decodedLogs[0].events[1].name).to.equal("instantiation");
-    expect(decodedLogs[0].events[1].value).to.equal(
-      "0x435a4167bc34107bd03e267f9d6b869255151a27"
-    );
+    expect(decodedLogs[0].events[1].value).to.equal("0x435a4167bc34107bd03e267f9d6b869255151a27");
     expect(decodedLogs[0].events[1].type).to.equal("address");
   });
 
@@ -582,14 +570,10 @@ describe("abi decoder", function () {
     expect(decodedLogs).to.have.length(1);
     expect(decodedLogs[0].name).to.equal("Deposit");
     expect(decodedLogs[0].events).to.have.length(2);
-    expect(decodedLogs[0].address).to.equal(
-      "0x0457874Bb0a346962128a0C01310d00Fc5bb6a81"
-    );
+    expect(decodedLogs[0].address).to.equal("0x0457874Bb0a346962128a0C01310d00Fc5bb6a81");
     expect(decodedLogs[0].events[0].name).to.equal("sender");
     expect(decodedLogs[0].events[0].type).to.equal("address");
-    expect(decodedLogs[0].events[0].value).to.equal(
-      "0x05039084cc6f4773291a6ed7dcf5bc3a2e894ff3"
-    );
+    expect(decodedLogs[0].events[0].value).to.equal("0x05039084cc6f4773291a6ed7dcf5bc3a2e894ff3");
     expect(decodedLogs[0].events[1].name).to.equal("value");
     expect(decodedLogs[0].events[1].value).to.equal("1000000000000000");
     expect(decodedLogs[0].events[1].type).to.equal("uint256");
@@ -629,14 +613,10 @@ describe("abi decoder", function () {
     expect(decodedLogs).to.have.length(1);
     expect(decodedLogs[0].name).to.equal("Voted");
     expect(decodedLogs[0].events).to.have.length(3);
-    expect(decodedLogs[0].address).to.equal(
-      "0xF9be8F0945acDdeeDaA64DFCA5Fe9629D0CF8E5D"
-    );
+    expect(decodedLogs[0].address).to.equal("0xF9be8F0945acDdeeDaA64DFCA5Fe9629D0CF8E5D");
     expect(decodedLogs[0].events[0].name).to.equal("voter");
     expect(decodedLogs[0].events[0].type).to.equal("address");
-    expect(decodedLogs[0].events[0].value).to.equal(
-      "0x14341f81df14ca86e1420ec9e6abd343fb1c5bfc"
-    );
+    expect(decodedLogs[0].events[0].value).to.equal("0x14341f81df14ca86e1420ec9e6abd343fb1c5bfc");
     expect(decodedLogs[0].events[1].name).to.equal("pollId");
     expect(decodedLogs[0].events[1].value).to.equal("34");
     expect(decodedLogs[0].events[1].type).to.equal("uint256");
