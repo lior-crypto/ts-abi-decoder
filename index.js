@@ -130,30 +130,40 @@ function _decodeMethod(data) {
   }
 }
 
-function _decodeLogs(logs) {
+function _decodeLogs(logs) {  
   return logs.filter(log => log.topics.length > 0).map((logItem) => {
     const methodID = logItem.topics[0].slice(2);
     const method = state.methodIDs[methodID];
-    if (method) {
+    if (method) { 
       const logData = logItem.data;
       let decodedParams = [];
       let dataIndex = 0;
       let topicsIndex = 1;
-
       let dataTypes = [];
       method.inputs.map(function(input) {
-        if (!input.indexed) {
-          dataTypes.push(input.type);
+        if (!input.indexed) {          
+          if( input.type === "tuple" ) {
+            // it works only one depth tuple
+            // if multi depth => use recursive            
+            const tupleType =  {};
+            const tupleValue = {};
+            for( let i =0;  i < input.components.length;  ++i)
+              tupleValue[input.components[i].name] =  input.components[i].type;            
+            tupleType[input.components.name] = tupleValue;            
+            dataTypes.push(tupleType);    
+          }
+          else 
+            dataTypes.push(input.type);
         }
       });
-
+            
       const decodedData = abiCoder.decodeParameters(
         dataTypes,
         logData.slice(2)
       );
 
       // Loop topic and data to get the params
-      method.inputs.map(function(param) {
+      method.inputs.map(function(param) {      
         let decodedP = {
           name: param.name,
           type: param.type,
@@ -162,10 +172,11 @@ function _decodeLogs(logs) {
         if (param.indexed) {
           decodedP.value = logItem.topics[topicsIndex];
           topicsIndex++;
-        } else {
+        } else {          
           decodedP.value = decodedData[dataIndex];
           dataIndex++;
         }
+        
 
         if (param.type === "address") {
           decodedP.value = decodedP.value.toLowerCase();
@@ -189,7 +200,6 @@ function _decodeLogs(logs) {
           } else {
             decodedP.value = new BN(decodedP.value).toString(10);
           }
-
         }
 
         decodedParams.push(decodedP);
@@ -201,8 +211,9 @@ function _decodeLogs(logs) {
         address: logItem.address,
       };
     }
-  });
+  }).filter(decoded => state.keepNonDecodedLogs || decoded);
 }
+
 
 module.exports = {
   getABIs: _getABIs,
