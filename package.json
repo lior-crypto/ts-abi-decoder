@@ -1,6 +1,6 @@
 {
   "name": "ts-abi-decoder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Nodejs and TypeScript library for decoding data params and events from ethereum transactions\"",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
