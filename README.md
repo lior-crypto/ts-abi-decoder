@@ -5,7 +5,7 @@ Nodejs and Typescript library for decoding data params and events from etherem t
 # Install
 
 ```
-npm install abi-decoder
+npm install ts-abi-decoder
 ```
 
 # Add ABI's
