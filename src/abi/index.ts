@@ -1,8 +1,8 @@
 import BN from "bn.js";
-import { ABIs, DecodeData, DecodeEvent, DecodeLog, Log } from "types";
 import abiCoder, { AbiCoder } from "web3-eth-abi";
 import { AbiItem, sha3 } from "web3-utils";
 
+import { ABIs, DecodeData, DecodeEvent, DecodeLog, Log } from "../types";
 import { inputToString } from "../utils";
 
 const GlobalData: ABIs = {

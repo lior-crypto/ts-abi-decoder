@@ -1,5 +1,5 @@
-import { DecodeData, DecodeLog, Log } from "types";
 import { AbiItem } from "web3-utils";
+import { DecodeData, DecodeLog, Log } from "../types";
 export declare const getABIs: () => AbiItem[];
 export declare const addABI: (abiArray: AbiItem[]) => void;
 export declare const decodeData: (data: string) => DecodeData;
