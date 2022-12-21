@@ -96,7 +96,7 @@ export const decodeLogs = (logs: Log[]): DecodeLog[] => {
         return createDecodeLog(method, logItem);
       }
     })
-    .filter((decoded) => decoded) as DecodeLog[];
+    .filter((decoded) => decoded);
 };
 
 export const decodeLog = (logItem: Log): DecodeLog | undefined => {

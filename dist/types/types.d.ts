@@ -1,4 +1,4 @@
-import { AbiInput, AbiItem } from "web3-utils";
+import { AbiItem } from "web3-utils";
 export interface ABIs {
     ABIs: AbiItem[];
     Ids: Record<string, AbiItem>;
@@ -17,7 +17,7 @@ export interface Input {
     name: string;
     type: string;
     indexed?: boolean;
-    components?: AbiInput[];
+    components?: Input[];
     internalType?: string;
 }
 export interface DecodeLog {
