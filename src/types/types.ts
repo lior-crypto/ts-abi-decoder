@@ -28,6 +28,7 @@ export interface DecodeLog {
 }
 
 export interface DecodeEvent {
+  [x: string]: any;
   name: string;
   type: string;
   value: string | DecodeEvent[];
