@@ -63,7 +63,7 @@ const testABI = [
     anonymous: false,
   },
 ];
-abiDecoder.addABI(testABI);
+Decoder.addABI(testABI);
 ```
 
 # Decode Tx data
@@ -71,7 +71,7 @@ abiDecoder.addABI(testABI);
 ```js
 const testData =
   "0x53d9d9100000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000a6d9c5f7d4de3cef51ad3b7235d79ccc95114de5000000000000000000000000a6d9c5f7d4de3cef51ad3b7235d79ccc95114daa";
-const decodedData = abiDecoder.decodeMethod(testData);
+const decodedData = Decoder.decodeData(testData);
 ```
 
 # Decode Logs from Tx Receipt
@@ -80,7 +80,19 @@ const decodedData = abiDecoder.decodeMethod(testData);
 web3.eth.getTransactionReceipt(
   "0x9199e262aaab0a6ec99558b3e9f42397c07a2bb9c6befb637643aebfb03cc32a",
   function (e, receipt) {
-    const decodedLogs = abiDecoder.decodeLogs(receipt.logs);
+    const decodedLogs = Decoder.decodeLogs(receipt.logs);
   }
+);
+```
+
+# Decode event from subscibe
+
+```js
+web3.eth.subscribe('logs', {
+        0,
+        address: "0x0000000000000000000000000000000000000000",
+      }).on('data', async (event) => {
+         const decodedLog = Decoder.decodeLog(event);
+      })
 );
 ```
