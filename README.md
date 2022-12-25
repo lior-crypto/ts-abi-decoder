@@ -1,18 +1,27 @@
 # ts-abi-decoder
 
-Nodejs and Typescript library for decoding data params and events from etherem transactions
+Nodejs and Typescript library for decoding data params and events from etherem blockchain
+
+## Features
+
+- Add ABI's
+- Decode Tx data
+- Decode Logs from Tx Receipt
+- Decode events
+- work with tuples
 
 # Install
 
 ```
 npm install ts-abi-decoder
+yarn add ts-abi-decoder
 ```
 
 # Add ABI's
 
 Need to pass the ABI's manually to the library in order to be able to decode params later
 
-```js
+```ts
 const testABI = [
   {
     inputs: [{ type: "address", name: "" }],
@@ -68,7 +77,7 @@ Decoder.addABI(testABI);
 
 # Decode Tx data
 
-```js
+```ts
 const testData =
   "0x53d9d9100000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000a6d9c5f7d4de3cef51ad3b7235d79ccc95114de5000000000000000000000000a6d9c5f7d4de3cef51ad3b7235d79ccc95114daa";
 const decodedData = Decoder.decodeData(testData);
@@ -76,7 +85,7 @@ const decodedData = Decoder.decodeData(testData);
 
 # Decode Logs from Tx Receipt
 
-```js
+```ts
 web3.eth.getTransactionReceipt(
   "0x9199e262aaab0a6ec99558b3e9f42397c07a2bb9c6befb637643aebfb03cc32a",
   function (e, receipt) {
@@ -87,7 +96,7 @@ web3.eth.getTransactionReceipt(
 
 # Decode event from subscibe
 
-```js
+```ts
 web3.eth.subscribe('logs', {
         0,
         address: "0x0000000000000000000000000000000000000000",
