@@ -6,3 +6,25 @@ export const inputToString = (input: Input): string => {
   }
   return input.type;
 };
+
+// const inputToString = (newobj: any, a: DecodeEvent) => {
+//   if (Array.isArray(a.value) && typeof a.value !== 'string') {
+//     newobj[a.name] = {}
+//     a.value.forEach((b) => {
+//       inputToString(newobj[a.name], b)
+//     })
+//   } else {
+//     newobj[a.name] = a.value
+//   }
+// }
+
+// const inputToString = (newobj: any, a: DecodeEvent) => {
+//   if (Array.isArray(a.value) && typeof a.value !== 'string') {
+//     newobj[a.name] = {}
+//     a.value.forEach((b) => {
+//       inputToString(newobj[a.name], b)
+//     })
+//   } else {
+//     newobj[a.name] = a.value
+//   }
+// }

@@ -1,6 +1,6 @@
 import BN from "bn.js";
 import abiCoder, { AbiCoder } from "web3-eth-abi";
-import { AbiItem, sha3 } from "web3-utils";
+import { AbiInput, AbiItem, sha3 } from "web3-utils";
 
 import { ABIs, DecodeData, DecodeEvent, DecodeLog, Log } from "../types";
 import { inputToString } from "../utils";
@@ -18,6 +18,8 @@ export const addABI = (abiArray: AbiItem[]) => {
   if (Array.isArray(abiArray)) {
     abiArray.map(function (abi) {
       if (abi && abi.name && abi.inputs) {
+        // console.log(abi.inputs.map(inputToString).join(","));
+
         const signature = sha3(abi.name + "(" + abi.inputs.map(inputToString).join(",") + ")");
         if (signature) {
           if (abi.type === "event") {
@@ -109,45 +111,43 @@ export const decodeLog = (logItem: Log): DecodeLog | undefined => {
   return undefined;
 };
 
-const createDecodeLog = (method: AbiItem, logItem: Log) => {
-  const logData = logItem.data;
-  const decodedParams: DecodeEvent[] = [];
-  let dataIndex = 0;
-  let topicsIndex = 1;
-  const dataTypes: Record<string, Record<string, string>>[] & string[] = [];
-  method.inputs.map((input) => {
-    if (!input.indexed) {
-      if (input.type === "tuple" && input.components) {
-        const tupleType: Record<string, Record<string, string>> = {};
-        const tupleValue: Record<string, string> = {};
-        input.components.forEach((comp) => {
-          tupleValue[comp.name] = comp.type;
-        });
-        tupleType[input.name] = tupleValue;
-        dataTypes.push(tupleType);
-      } else dataTypes.push(input.type);
-    }
-  });
-  const abi = abiCoder as unknown; // a bug in the web3-eth-abi types
+const tupleHandler = (ret: boolean, input: AbiInput) => {
+  if (input.type === "tuple" && input.components) {
+    const tupleType: Record<string, Record<string, string>> = {};
 
-  const decodedData = (abi as AbiCoder).decodeParameters(dataTypes, logData.slice(2));
-
-  // Loop topic and data to get the params
-  method.inputs.map((param) => {
-    const decodedP: DecodeEvent = {
-      name: param.name,
-      type: param.type,
-      value: "",
-    };
-
-    if (param.indexed) {
-      decodedP.value = logItem.topics[topicsIndex];
-      topicsIndex++;
+    const tupleValue: Record<string, string> = {};
+    input.components.forEach((comp) => {
+      if (comp.type === "tuple" && comp.components) {
+        tupleValue[comp.name] = tupleHandler(true, comp) as any;
+      } else {
+        tupleValue[comp.name] = comp.type;
+      }
+    });
+    if (!ret) {
+      tupleType[input.name] = tupleValue;
+      return tupleType;
     } else {
-      decodedP.value = decodedData[dataIndex];
-      dataIndex++;
+      return tupleValue;
     }
+  } else {
+    return input.type;
+  }
+};
 
+const notindexedParser = (param: AbiInput, decodedData: any, logItem: Log, i: number) => {
+  const decodedP: DecodeEvent = {
+    name: param.name,
+    type: param.type,
+    value: "",
+  };
+
+  if (param.indexed) {
+    decodedP.value = decodedData;
+  } else {
+    decodedP.value = decodedData[i];
+  }
+
+  if (decodedP.value) {
     if (param.type === "address" && typeof decodedP.value === "string") {
       decodedP.value = decodedP.value.toLowerCase();
       // 42 because len(0x) + 40
@@ -158,27 +158,46 @@ const createDecodeLog = (method: AbiItem, logItem: Log) => {
         decodedP.value = temp.join("");
       }
     }
-
     if (param.type === "uint256" || param.type === "uint8" || param.type === "int") {
-      // ensure to remove leading 0x for hex numbers
       if (typeof decodedP.value === "string" && decodedP.value.startsWith("0x")) {
         decodedP.value = new BN(decodedP.value.slice(2), 16).toString(10);
       } else {
         decodedP.value = new BN(decodedP.value.toString()).toString(10);
       }
     }
+
     if (param.type === "tuple") {
       decodedP.value = [];
       param.components.forEach((comp, index) => {
-        (decodedP.value as any).push({
-          name: comp.name,
-          value: decodedData[dataIndex - 1][index],
-          type: comp.type,
-        });
+        const sdsd = notindexedParser(comp, decodedData[i], logItem, index);
+        (decodedP.value as any).push(sdsd);
       });
     }
+    return decodedP;
+  }
+};
 
-    decodedParams.push(decodedP);
+const createDecodeLog = (method: AbiItem, logItem: Log) => {
+  const logData = logItem.data;
+  const dataTypes: any = [];
+  method.inputs.map((input) => {
+    if (!input.indexed) {
+      dataTypes.push(tupleHandler(false, input));
+    }
+  });
+  const decodedParams: DecodeEvent[] = [];
+
+  const abi = abiCoder as unknown; // a bug in the web3-eth-abi types
+  const decodedData = (abi as AbiCoder).decodeParameters(dataTypes, logData.slice(2));
+
+  let count = 0;
+  method.inputs.forEach((param, index) => {
+    if (!param.indexed) {
+      decodedParams.push(notindexedParser(param, decodedData, logItem, index - count));
+    } else {
+      decodedParams.push(notindexedParser(param, logItem.topics[index + 1], logItem, index));
+      count++;
+    }
   });
 
   return {

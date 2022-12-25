@@ -20,6 +20,7 @@ const addABI = (abiArray) => {
     if (Array.isArray(abiArray)) {
         abiArray.map(function (abi) {
             if (abi && abi.name && abi.inputs) {
+                // console.log(abi.inputs.map(inputToString).join(","));
                 const signature = (0, web3_utils_1.sha3)(abi.name + "(" + abi.inputs.map(utils_1.inputToString).join(",") + ")");
                 if (signature) {
                     if (abi.type === "event") {
@@ -107,6 +108,30 @@ const decodeLog = (logItem) => {
     return undefined;
 };
 exports.decodeLog = decodeLog;
+const tupleHandler = (dataTypes, input) => {
+    try {
+        if (input.type === "tuple" && input.components) {
+            const tupleType = {};
+            const tupleValue = {};
+            input.components.forEach((comp) => {
+                if (comp.type === "tuple" && comp.components) {
+                    console.log(comp.name, comp);
+                    tupleHandler(dataTypes, comp);
+                }
+                else {
+                    tupleValue[comp.name] = comp.type;
+                }
+            });
+            tupleType[input.name] = tupleValue;
+            dataTypes.push(tupleType);
+        }
+        else
+            dataTypes.push(input.type);
+    }
+    catch (e) {
+        console.log(e);
+    }
+};
 const createDecodeLog = (method, logItem) => {
     const logData = logItem.data;
     const decodedParams = [];
@@ -115,19 +140,21 @@ const createDecodeLog = (method, logItem) => {
     const dataTypes = [];
     method.inputs.map((input) => {
         if (!input.indexed) {
-            if (input.type === "tuple" && input.components) {
-                const tupleType = {};
-                const tupleValue = {};
-                input.components.forEach((comp) => {
-                    tupleValue[comp.name] = comp.type;
-                });
-                tupleType[input.name] = tupleValue;
-                dataTypes.push(tupleType);
-            }
-            else
-                dataTypes.push(input.type);
+            tupleHandler(dataTypes, input);
+            // if (input.type === "tuple" && input.components) {
+            //   const tupleType: Record<string, Record<string, string>> = {};
+            //   const tupleValue: Record<string, string> = {};
+            //   input.components.forEach((comp) => {
+            //     tupleValue[comp.name] = comp.type;
+            //   });
+            //   tupleType[input.name] = tupleValue;
+            //   dataTypes.push(tupleType);
+            // } else dataTypes.push(input.type);
+            // tupleHandler(dataTypes, input);
         }
     });
+    if (!dataTypes.length)
+        return undefined;
     const abi = web3_eth_abi_1.default; // a bug in the web3-eth-abi types
     const decodedData = abi.decodeParameters(dataTypes, logData.slice(2));
     // Loop topic and data to get the params
@@ -158,9 +185,11 @@ const createDecodeLog = (method, logItem) => {
         if (param.type === "uint256" || param.type === "uint8" || param.type === "int") {
             // ensure to remove leading 0x for hex numbers
             if (typeof decodedP.value === "string" && decodedP.value.startsWith("0x")) {
+                console.log(new bn_js_1.default(decodedP.value.slice(2), 16).toString(10));
                 decodedP.value = new bn_js_1.default(decodedP.value.slice(2), 16).toString(10);
             }
             else {
+                console.log(new bn_js_1.default(decodedP.value.toString()).toString(10));
                 decodedP.value = new bn_js_1.default(decodedP.value.toString()).toString(10);
             }
         }

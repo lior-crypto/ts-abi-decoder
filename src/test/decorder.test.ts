@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { AbiItem } from "web3-utils";
 
-import { Decoder, Log } from "../../dist";
+import { Decoder, Log } from "../index";
 
 // Test Params
 const testABI: AbiItem[] = [
@@ -66,104 +66,6 @@ const testArrNumbersABI: AbiItem[] = [
   },
 ];
 
-const abidTuples: AbiItem[] = [
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "by",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "activator",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "id",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "builder",
-        type: "address",
-      },
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "kiroboPayment",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "builderPayment",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "activatorPayment",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "base",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "fees",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "commonGas",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "userGas",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "missingKiro",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "availableEth",
-            type: "uint256",
-          },
-        ],
-        indexed: false,
-        internalType: "struct Total",
-        name: "total",
-        type: "tuple",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "gasPrice",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "timestamp",
-        type: "uint256",
-      },
-    ],
-    name: "FCTE_Activated",
-    type: "event",
-  },
-];
 const abiV2: AbiItem[] = [
   {
     constant: false,
@@ -296,6 +198,7 @@ describe("abi decoder", function () {
     if (!decodedData) {
       expect(decodedData).to.be.an("array");
     }
+
     expect(decodedData).to.be.an("object");
     expect(decodedData).to.have.all.keys("name", "params");
     expect(decodedData.name).to.be.a("string");
@@ -306,39 +209,6 @@ describe("abi decoder", function () {
     expect(decodedData.params[0].value[2]).to.equal("3");
     expect(decodedData.params[0].name).to.equal("n");
     expect(decodedData.params[0].type).to.equal("uint256[]");
-  });
-  it("decode log with tuples", () => {
-    Decoder.addABI([...abidTuples]);
-    const testLogs: Log = {
-      data: "0x000000000000000000000000e911180acde75bfbacfc8bbfd484768b6aa3bd300000000000000000000000000000000000000000000000000003b168fdd147270000000000000000000000000000000000000000000000000003b168fdd14727000000000000000000000000000000000000000000000000000b7d21035a5d0a000000000000000000000000000000000000000000000000000068e609e687920000000000000000000000000000000000000000000000000012770cf51663c80000000000000000000000000000000000000000000000000000000000034f770000000000000000000000000000000000000000000000000000000000019422000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002bbd0000000000000000000000000000000000000000000000000000000063a240b0",
-      topics: [
-        "0x3d67d7b0242c56cec690a3513b11ac7c54835ff09550d772f7f354269829c669",
-        "0x000000000000000000000000b4e6b1ebe575a1c459460436001832487df856c1",
-        "0x000000000000000000000000b4e6b1ebe575a1c459460436001832487df856c1",
-        "0x2409a93401010100000000000000000000000000000000000000000000000014",
-      ],
-      address: "0xB252A554217d614Fb2968cf8f87b02e3D9DBd63C",
-    };
-    const decodedLog = Decoder.decodeLog(testLogs);
-    if (!decodedLog) {
-      expect(decodedLog).to.be.equal("1");
-    }
-
-    // console.log(JSON.stringify(decodedLog, null, 2));
-
-    expect(decodedLog).to.be.an("object");
-    expect(decodedLog).to.have.keys(["name", "address", "events"]);
-    expect(decodedLog.name).to.equal("FCTE_Activated");
-    expect(decodedLog.events).to.have.length(7);
-    expect(decodedLog.address).to.equal("0xB252A554217d614Fb2968cf8f87b02e3D9DBd63C");
-    expect(decodedLog.events[0].name).to.equal("by");
-    expect(decodedLog.events[0].value).to.equal("0xb4e6b1ebe575a1c459460436001832487df856c1");
-    expect(decodedLog.events[0].type).to.equal("address");
-    expect(decodedLog.events[4].name).to.equal("total");
-    expect(decodedLog.events[4].type).to.equal("tuple");
-    expect((decodedLog.events[4].value[0] as any).name).to.equal("kiroboPayment");
-    expect((decodedLog.events[4].value[0] as any).value).to.equal("1039489423197991");
-    expect((decodedLog.events[4].value[0] as any).type).to.equal("uint256");
   });
 
   it("decode log without indexed", () => {
@@ -719,6 +589,7 @@ describe("abi decoder", function () {
     if (!decodedLogs[0]) {
       expect(decodedLogs).to.be.an("object");
     }
+
     expect(decodedLogs).to.be.an("array");
     expect(decodedLogs).to.have.length(1);
     expect(decodedLogs[0].name).to.equal("Deposit");

@@ -8,3 +8,23 @@ const inputToString = (input) => {
     return input.type;
 };
 exports.inputToString = inputToString;
+// const inputToString = (newobj: any, a: DecodeEvent) => {
+//   if (Array.isArray(a.value) && typeof a.value !== 'string') {
+//     newobj[a.name] = {}
+//     a.value.forEach((b) => {
+//       inputToString(newobj[a.name], b)
+//     })
+//   } else {
+//     newobj[a.name] = a.value
+//   }
+// }
+// const inputToString = (newobj: any, a: DecodeEvent) => {
+//   if (Array.isArray(a.value) && typeof a.value !== 'string') {
+//     newobj[a.name] = {}
+//     a.value.forEach((b) => {
+//       inputToString(newobj[a.name], b)
+//     })
+//   } else {
+//     newobj[a.name] = a.value
+//   }
+// }
