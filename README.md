@@ -1,5 +1,4 @@
 # ts-abi-decoder
-
 Nodejs and Typescript library for decoding data params and events from etherem blockchain
 
 ## Features
