@@ -1,4 +1,5 @@
 # ts-abi-decoder
+
 Nodejs and Typescript library for decoding data params and events from etherem blockchain
 
 ## Features
@@ -77,11 +78,10 @@ Decoder.addABI(testABI);
 # Get Topic
 
 Need to pass the event name
-const topic = Decoder.getTopic("ContractInstantiation")
-output: ContractInstantiation(address,address)
 
 ```ts
-
+const topic = Decoder.getTopic("ContractInstantiation");
+output: "ContractInstantiation(address, address)";
 ```
 
 # Decode Tx data
