@@ -75,6 +75,16 @@ const testABI = [
 Decoder.addABI(testABI);
 ```
 
+# Get Topic
+
+Need to pass the event name
+const topic = Decoder.getTopic("ContractInstantiation")
+output: ContractInstantiation(address,address)
+
+```ts
+
+```
+
 # Decode Tx data
 
 ```ts

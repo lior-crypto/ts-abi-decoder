@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { AbiItem } from "web3-utils";
 
-import { Decoder, Log } from "../index";
+import { Decoder, Log } from "../../dist";
 
 // Test Params
 const testABI: AbiItem[] = [
@@ -575,6 +575,9 @@ describe("abi decoder", function () {
       },
     ];
     Decoder.addABI(walletABI);
+    // console.log(Decoder.getTopic("RequirementChange"));
+    const topic = Decoder.getTopic("RequirementChange");
+
     const testLogs = [
       {
         data: "0x00000000000000000000000000000000000000000000000000038d7ea4c68000",
@@ -590,6 +593,7 @@ describe("abi decoder", function () {
       expect(decodedLogs).to.be.an("object");
     }
 
+    expect(topic).to.equal("RequirementChange(uint256)");
     expect(decodedLogs).to.be.an("array");
     expect(decodedLogs).to.have.length(1);
     expect(decodedLogs[0].name).to.equal("Deposit");

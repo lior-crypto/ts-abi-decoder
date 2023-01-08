@@ -8,16 +8,24 @@ import { inputToString, notindexedParser, tupleHandler } from "../utils";
 const GlobalData: ABIs = {
   ABIs: [],
   Ids: {},
+  topics: {},
 };
 
 export const getABIs = () => {
   return GlobalData.ABIs;
 };
 
-export const addABI = (abiArray: AbiItem[]) => {
+export const getTopic = (event: string) => {
+  return GlobalData.topics[event];
+};
+
+export const addABI = async (abiArray: AbiItem[]) => {
   if (Array.isArray(abiArray)) {
     abiArray.map(function (abi) {
       if (abi && abi.name && abi.inputs) {
+        // console.log(abi.name);
+
+        GlobalData.topics[abi.name] = abi.name + "(" + abi.inputs.map(inputToString).join(",") + ")";
         const signature = sha3(abi.name + "(" + abi.inputs.map(inputToString).join(",") + ")");
         if (signature) {
           if (abi.type === "event") {

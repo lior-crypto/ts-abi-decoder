@@ -2,6 +2,7 @@ import { AbiItem } from "web3-utils";
 export interface ABIs {
     ABIs: AbiItem[];
     Ids: Record<string, AbiItem>;
+    topics: Record<string, string>;
 }
 export interface DecodeData {
     name: string;
